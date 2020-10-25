@@ -4,8 +4,13 @@ project(libtiss VERSION 0.0.1)
 include(CTest)
 enable_testing()
 
+# Clang tidy
+set(CMAKE_CXX_CLANG_TIDY clang-tidy-9)
+
 set(BIN_DIR ${CMAKE_SOURCE_DIR}/bin/)
-set(LIB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(LIB_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(LIB_TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BIN_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BIN_DIR})
@@ -17,10 +22,11 @@ include(${PROJECT_SOURCE_DIR}/cmake/utilites.cmake)
 # Include Google Test Framework
 include(cmake/gtest.cmake)
 
-
 add_library(tiss SHARED 
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/version.c)
-target_include_directories(tiss PRIVATE ${LIB_INCLUDE})
+  ${LIB_SOURCES}/vector.c
+  ${LIB_SOURCES}/version.c
+)
+target_include_directories(tiss PRIVATE ${LIB_INCLUDES})
 
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

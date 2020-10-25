@@ -1,3 +1,3 @@
 #include <tiss/tiss.h>
 
-tiss_version();
+const char *tiss_version();

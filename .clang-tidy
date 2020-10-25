@@ -1,0 +1,20 @@
+Checks: '-*,clang-diagnostic-*,llvm-*,-misc-unused-parameters,readability-identifier-naming,misc-assert-side-effect,readability-container-size-empty'
+CheckOptions:
+  - key: readability-identifier-naming.TypedefCase
+    value: lower_case
+  - key: readability-identifier-naming.StructCase
+    value: lower_case
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: _
+  - key: misc-assert-side-effect.CheckFunctionCalls
+    value: 1
+  - key: misc-assert-side-effect.AssertMacros
+    value: 'assert'
