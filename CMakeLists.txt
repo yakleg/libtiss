@@ -9,25 +9,21 @@ set(CMAKE_CXX_CLANG_TIDY clang-tidy-9)
 
 set(BIN_DIR ${CMAKE_SOURCE_DIR}/bin/)
 set(LIB_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(LIB_TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+set(LIB_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BIN_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BIN_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_DIR})
 
-# Include cmake utility functions
-include(${PROJECT_SOURCE_DIR}/cmake/utilites.cmake)
-
-# Include Google Test Framework
-include(cmake/gtest.cmake)
-
-add_library(tiss SHARED 
-  ${LIB_SOURCES}/vector.c
-  ${LIB_SOURCES}/version.c
+add_library(tiss SHARED
+  ${LIB_SRC_DIR}/vector.c
+  ${LIB_SRC_DIR}/version.c
 )
-target_include_directories(tiss PRIVATE ${LIB_INCLUDES})
+target_include_directories(tiss PUBLIC ${LIB_INCLUDES})
+set_property(TARGET tiss PROPERTY C_STANDARD 11)
 
+# Include tests
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

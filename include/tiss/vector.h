@@ -3,13 +3,18 @@
 
 #include <tiss/sys.h>
 
+#if defined __cplusplus
+extern "C" {
+#endif
+
 typedef struct ts__vector ts__vector_t;
-typedef struct ts__vector *ts__vector_ptr;
+
+typedef ts__vector_t *ts__vector_ptr;
+
+struct ts_vector;
 
 typedef int (*ts__vector_transform_cb)(ts__vector_ptr self, size_t index,
                                        void *item);
-
-struct ts_vector;
 
 #pragma region /* ts__vector_t construction and destruction region */
 
@@ -38,10 +43,10 @@ int ts__vector_init(ts__vector_t **self, size_t item_size);
       - EINVAL if self is NULL or capacity is 0 (zero)
       - ENOMEM Out of memory case
 */
-int ts__vector_reserve(ts__vector_t *self, size_t capacity);
+int ts__vector_reserve(ts__vector_ptr self, size_t capacity);
 
 /*  Destroy vector */
-void ts__vector_free(ts__vector_t *self);
+void ts__vector_free(ts__vector_ptr self);
 
 #pragma endregion /* ts__vector_t construction and destruction region */
 
@@ -127,5 +132,9 @@ ssize_t ts__vector_size(const ts__vector_ptr self);
 ssize_t ts__vector_capacity(const ts__vector_ptr self);
 
 #pragma endregion /* ts__vector_t data query region */
+
+#if defined __cplusplus
+}
+#endif
 
 #endif  // TISS_VECTOR_H
