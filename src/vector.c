@@ -50,20 +50,27 @@ int ts__vector_init(ts__vector_t **self, size_t item_size) {
 
 #undef TISS__VECTOR_DEFAULT_CAPACITY
 
-/*  Reserve space enough for the (capacity * item_size)
+int ts__vector_reserve(ts__vector_ptr self, size_t capacity) {
+  assert(self != NULL /* self must not be NULL */);
+  assert(capacity != 0 /* capacity must not be  0 (zero) */);
 
-    parameters:
-      - self pointer to ts__vector_t
-      - capacity amount of items for reservation of space
+  size_t new_capacity;
+  void *new_data;
+  if (self == NULL || capacity == 0 || capacity < self->size) return EINVAL;
+  if (self->capacity >= capacity) return 0; /* nothing to do */
 
-    returns:
-      - 0 on success
-      - EINVAL if self is NULL or capacity is 0 (zero)
-      - ENOMEM Out of memory case
-*/
-int ts__vector_reserve(ts__vector_ptr self, size_t capacity);
+  new_capacity = self->capacity;
+  while (new_capacity < capacity) new_capacity *= 2;
 
-/*  Destroy vector */
+  new_data = realloc(self->data, new_capacity * self->item_size);
+  if (new_data == NULL) return ENOMEM;
+
+  self->data = new_data;
+  self->capacity = new_capacity;
+
+  return 0;
+}
+
 void ts__vector_free(ts__vector_ptr self) {
   if (self != NULL) {
     if (self->data != NULL) free(self->data);
@@ -86,7 +93,27 @@ void ts__vector_free(ts__vector_ptr self) {
       - EINVAL if self is NULL or item is NULL
       - ENOMEM Out of memory case
 */
-ssize_t ts__vector_push(ts__vector_ptr self, const void *item);
+ssize_t ts__vector_push(ts__vector_ptr self, const void *item) {
+  assert(self != NULL /* self must not be NULL */);
+  assert(item != NULL /* item must not be NULL */);
+
+  ssize_t index = 0;
+  void *dest;
+  int error;
+
+  if (self == NULL || item == NULL) return EINVAL;
+
+  error = ts__vector_reserve(self, self->size + 1);
+  if (error != 0) return error;
+
+  index = self->size;
+  dest = self->data + index * self->item_size;
+  memcpy(dest, item, self->size);
+
+  self->size++;
+
+  return index;
+}
 
 /*  Traverse through all the items in the vector (self)
     and apply the callback to each.

@@ -41,6 +41,7 @@ int ts__vector_init(ts__vector_t **self, size_t item_size);
     returns:
       - 0 on success
       - EINVAL if self is NULL or capacity is 0 (zero)
+        or capacity < amount of items invector
       - ENOMEM Out of memory case
 */
 int ts__vector_reserve(ts__vector_ptr self, size_t capacity);
