@@ -16,8 +16,6 @@ struct ts_vector;
 typedef int (*ts__vector_transform_cb)(ts__vector_ptr self, size_t index,
                                        void *item);
 
-#pragma region /* ts__vector_t construction and destruction region */
-
 /*  Initialize an instance of ts__vector_t
     through the double-pointer using malloc
 
@@ -28,6 +26,7 @@ typedef int (*ts__vector_transform_cb)(ts__vector_ptr self, size_t index,
     returns:
       - 0 on success
       - EINVAL if self double-pointer is NULL or item_size is 0 (zero)
+      - E2BIG in case item size > SSIZE_MAX
       - ENOMEM Out of memory case
 */
 int ts__vector_init(ts__vector_t **self, size_t item_size);
@@ -42,16 +41,13 @@ int ts__vector_init(ts__vector_t **self, size_t item_size);
       - 0 on success
       - EINVAL if self is NULL or capacity is 0 (zero)
         or capacity < amount of items invector
+      - E2BIG in case capacity > SSIZE_MAX
       - ENOMEM Out of memory case
 */
 int ts__vector_reserve(ts__vector_ptr self, size_t capacity);
 
 /*  Destroy vector */
 void ts__vector_free(ts__vector_ptr self);
-
-#pragma endregion /* ts__vector_t construction and destruction region */
-
-#pragma region /* ts__vector_t data manipulation region */
 
 /*  Push (copy) item_size of bytes from item to storage
 
@@ -92,10 +88,6 @@ ssize_t ts__vector_transform(ts__vector_ptr self,
 */
 int ts__vector_pop(ts__vector_ptr self);
 
-#pragma endregion /* ts__vector_t data manipulation region */
-
-#pragma region /* ts__vector_t data query region */
-
 /*  Retrieve copy of the item by index
 
     parameters:
@@ -131,8 +123,6 @@ ssize_t ts__vector_size(const ts__vector_ptr self);
       - EINVAL if self is NULL
 */
 ssize_t ts__vector_capacity(const ts__vector_ptr self);
-
-#pragma endregion /* ts__vector_t data query region */
 
 #if defined __cplusplus
 }
