@@ -30,6 +30,8 @@ int ts__vector_init(ts__vector_t **self, size_t item_size) {
   if (item_size > SSIZE_MAX) return E2BIG;
   /* preconditions */
 
+  int cc;
+
   size_t data_size;
   void *data;
 

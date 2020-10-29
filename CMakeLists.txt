@@ -6,26 +6,16 @@ enable_testing()
 
 # Clang tidy
 # Todo: make different clang-tidy setting for C and C++
-# temporary disabled
-# set(CMAKE_CXX_CLANG_TIDY clang-tidy-9)
 
 set(BIN_DIR ${CMAKE_SOURCE_DIR}/bin/)
-set(LIB_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(LIB_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-
-set(LIB_SOURCES 
-  ${LIB_SRC_DIR}/vector.c
-  ${LIB_SRC_DIR}/version.c
-)
-
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BIN_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BIN_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_DIR})
 
-add_library(tiss SHARED ${LIB_SOURCES})
+set(LIB_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_include_directories(tiss PUBLIC ${LIB_INCLUDES})
-set_property(TARGET tiss PROPERTY C_STANDARD 11)
+# Include library 
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # Include tests
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
