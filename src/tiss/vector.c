@@ -8,7 +8,7 @@ extern "C" {
 #define TISS__VECTOR_DEFAULT_CAPACITY 2
 #endif
 
-#define __ADDR_OF(self, index) ((self)->data + (index) * (self)->item_size)
+#define __PTR_OF(self, index) ((self)->data + (index) * (self)->item_size)
 
 static_assert(TISS__VECTOR_DEFAULT_CAPACITY % 2 == 0,
               "TISS__VECTOR_DEFAULT_CAPACITY must be even");
@@ -30,12 +30,8 @@ int ts__vector_init(ts__vector_t **self, size_t item_size) {
   if (item_size > SSIZE_MAX) return E2BIG;
   /* preconditions */
 
-  int cc;
-
   size_t data_size;
   void *data;
-
-  int ccc;
 
   data_size = TISS__VECTOR_DEFAULT_CAPACITY * item_size;
   data = NULL;
@@ -59,7 +55,7 @@ int ts__vector_init(ts__vector_t **self, size_t item_size) {
   return 0;
 }
 
-int ts__vector_reserve(ts__vector_ptr self, size_t capacity) {
+int ts__vector_reserve(ts__vector_t *self, size_t capacity) {
   /* preconditions */
   assert(self != NULL /* self must not be NULL */);
   assert(capacity != 0 /* capacity must not be  0 (zero) */);
@@ -85,14 +81,14 @@ int ts__vector_reserve(ts__vector_ptr self, size_t capacity) {
   return 0;
 }
 
-void ts__vector_free(ts__vector_ptr self) {
+void ts__vector_free(ts__vector_t *self) {
   if (self != NULL) {
     if (self->data != NULL) free(self->data);
     free(self);
   }
 }
 
-ssize_t ts__vector_push(ts__vector_ptr self, const void *item) {
+ssize_t ts__vector_push(ts__vector_t *self, const void *item) {
   /* preconditions */
   assert(self != NULL /* self must not be NULL */);
   assert(item != NULL /* item must not be NULL */);
@@ -108,8 +104,8 @@ ssize_t ts__vector_push(ts__vector_ptr self, const void *item) {
   if (error != 0) return error;
 
   index = self->size;
-  dest = __ADDR_OF(self, index);
-  memcpy(dest, item, self->size);
+  dest = __PTR_OF(self, index);
+  memcpy(dest, item, self->item_size);
 
   self->size++;
 
@@ -127,7 +123,7 @@ ssize_t ts__vector_push(ts__vector_ptr self, const void *item) {
       - 0 or positive amount of transformed data
       - EINVAL if self is NULL or callback is NULL
 */
-ssize_t ts__vector_transform(ts__vector_ptr self,
+ssize_t ts__vector_transform(ts__vector_t *self,
                              ts__vector_transform_cb callback);
 
 /*  Remove one element from the back
@@ -140,7 +136,7 @@ ssize_t ts__vector_transform(ts__vector_ptr self,
       - ENODATA in case vector is empty
       - EINVAL if self is NULL
 */
-int ts__vector_pop(ts__vector_ptr self);
+int ts__vector_pop(ts__vector_t *self);
 
 /*  Retrieve copy of the item by index
 
@@ -154,16 +150,29 @@ int ts__vector_pop(ts__vector_ptr self);
       - ENODATA in case there is no such item
       - EINVAL if self is NULL or item is NULL
 */
-int ts__vector_get(const ts__vector_ptr self, size_t index, void *item);
+int ts__vector_get(const ts__vector_t *self, size_t index, void *item) {
+  /* preconditions */
+  assert(self != NULL /* self must not be NULL */);
+  assert(item != NULL /* item ptr must not be NULL */);
 
-ssize_t ts__vector_size(const ts__vector_ptr self) {
+  if (self == NULL || item == NULL) return EINVAL;
+  if (index >= self->size) return ENODATA;
+  /* preconditions */
+
+  const void *src = __PTR_OF(self, index);
+  memcpy(item, src, self->item_size);
+
+  return 0;
+}
+
+ssize_t ts__vector_size(const ts__vector_t *self) {
   assert(self != NULL /* self must not be NULL */);
 
   if (self == NULL) return EINVAL;
   return self->size;
 }
 
-ssize_t ts__vector_capacity(const ts__vector_ptr self) {
+ssize_t ts__vector_capacity(const ts__vector_t *self) {
   assert(self != NULL /* self must not be NULL */);
 
   if (self == NULL) return EINVAL;
@@ -172,7 +181,7 @@ ssize_t ts__vector_capacity(const ts__vector_ptr self) {
 
 #pragma endregion /* ts__vector_t data query region */
 
-#undef __ADDR_OF
+#undef __PTR_OF
 #undef TISS__VECTOR_DEFAULT_CAPACITY
 
 #if defined __cplusplus

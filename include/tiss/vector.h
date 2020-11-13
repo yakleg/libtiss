@@ -9,11 +9,9 @@ extern "C" {
 
 typedef struct ts__vector ts__vector_t;
 
-typedef ts__vector_t *ts__vector_ptr;
-
 struct ts_vector;
 
-typedef int (*ts__vector_transform_cb)(ts__vector_ptr self, size_t index,
+typedef int (*ts__vector_transform_cb)(ts__vector_t *self, size_t index,
                                        void *item);
 
 /*  Initialize an instance of ts__vector_t
@@ -44,10 +42,10 @@ int ts__vector_init(ts__vector_t **self, size_t item_size);
       - E2BIG in case capacity > SSIZE_MAX
       - ENOMEM Out of memory case
 */
-int ts__vector_reserve(ts__vector_ptr self, size_t capacity);
+int ts__vector_reserve(ts__vector_t *self, size_t capacity);
 
 /*  Destroy vector */
-void ts__vector_free(ts__vector_ptr self);
+void ts__vector_free(ts__vector_t *self);
 
 /*  Push (copy) item_size of bytes from item to storage
 
@@ -60,7 +58,7 @@ void ts__vector_free(ts__vector_ptr self);
       - EINVAL if self is NULL or item is NULL
       - ENOMEM Out of memory case
 */
-ssize_t ts__vector_push(ts__vector_ptr self, const void *item);
+ssize_t ts__vector_push(ts__vector_t *self, const void *item);
 
 /*  Traverse through all the items in the vector (self)
     and apply the callback to each.
@@ -73,7 +71,7 @@ ssize_t ts__vector_push(ts__vector_ptr self, const void *item);
       - 0 or positive amount of transformed data
       - EINVAL if self is NULL or callback is NULL
 */
-ssize_t ts__vector_transform(ts__vector_ptr self,
+ssize_t ts__vector_transform(ts__vector_t *self,
                              ts__vector_transform_cb callback);
 
 /*  Remove one element from the back
@@ -86,7 +84,7 @@ ssize_t ts__vector_transform(ts__vector_ptr self,
       - ENODATA in case vector is empty
       - EINVAL if self is NULL
 */
-int ts__vector_pop(ts__vector_ptr self);
+int ts__vector_pop(ts__vector_t *self);
 
 /*  Retrieve copy of the item by index
 
@@ -100,7 +98,7 @@ int ts__vector_pop(ts__vector_ptr self);
       - ENODATA in case there is no such item
       - EINVAL if self is NULL or item is NULL
 */
-int ts__vector_get(const ts__vector_ptr self, size_t index, void *item);
+int ts__vector_get(const ts__vector_t *self, size_t index, void *item);
 
 /*  Retrieve amount of items stored in the vector
 
@@ -111,7 +109,7 @@ int ts__vector_get(const ts__vector_ptr self, size_t index, void *item);
       - 0 or positive size of the vector
       - EINVAL if self is NULL
 */
-ssize_t ts__vector_size(const ts__vector_ptr self);
+ssize_t ts__vector_size(const ts__vector_t *self);
 
 /*  Retrieve amount of reserved space in items
 
@@ -122,7 +120,7 @@ ssize_t ts__vector_size(const ts__vector_ptr self);
       - 0 or positive capacity of the vector
       - EINVAL if self is NULL
 */
-ssize_t ts__vector_capacity(const ts__vector_ptr self);
+ssize_t ts__vector_capacity(const ts__vector_t *self);
 
 #if defined __cplusplus
 }
