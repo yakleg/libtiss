@@ -39,14 +39,14 @@ TEST(tiss_vector, ts__vector_get) {
   ASSERT_EQ(2, ts__vector_capacity(vector));
   ASSERT_EQ(0, ts__vector_size(vector));
 
-  for (int i = 0; i < 100; ++i) {
+  for (int i = 0; i < 1200; ++i) {
     ASSERT_EQ(i, ts__vector_push(vector, &i));
   }
 
-  ASSERT_EQ(128, ts__vector_capacity(vector));
-  ASSERT_EQ(100, ts__vector_size(vector));
+  ASSERT_EQ(2048, ts__vector_capacity(vector));
+  ASSERT_EQ(1200, ts__vector_size(vector));
 
-  for (int i = 0; i < 100; ++i) {
+  for (int i = 0; i < 1200; ++i) {
     int item;
     ASSERT_EQ(0, ts__vector_get(vector, i, &item));
     ASSERT_EQ(i, item);

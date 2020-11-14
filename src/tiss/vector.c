@@ -124,7 +124,24 @@ ssize_t ts__vector_push(ts__vector_t *self, const void *item) {
       - EINVAL if self is NULL or callback is NULL
 */
 ssize_t ts__vector_transform(ts__vector_t *self,
-                             ts__vector_transform_cb callback);
+                             ts__vector_transform_cb callback) {
+  /* preconditions */
+  assert(self != NULL /* self must not be NULL */);
+  assert(callback != NULL /* callback must not be NULL */);
+
+  if (self == NULL || callback == NULL) return EINVAL;
+  /* preconditions */
+
+  ssize_t index;
+  void *item;
+
+  for (index = 0; index < self->size; ++index) {
+    item = __PTR_OF(self, index);
+    callback(self, index, item);
+  }
+
+  return index + 1;
+}
 
 /*  Remove one element from the back
 
@@ -136,20 +153,20 @@ ssize_t ts__vector_transform(ts__vector_t *self,
       - ENODATA in case vector is empty
       - EINVAL if self is NULL
 */
-int ts__vector_pop(ts__vector_t *self);
+int ts__vector_pop(ts__vector_t *self) {
+  /* preconditions */
+  assert(self != NULL /* self must not be NULL */);
 
-/*  Retrieve copy of the item by index
+  if (self == NULL) return EINVAL;
+  if (self->size == 0) return ENODATA;
+  /* preconditions */
 
-    parameters:
-      - self pointer to ts__vector_t
-      - index of the item
-      - item double-pointer where to copy
+  void *data;
+  self->size--;
+  // Todo: shrik it?
+  return 0;
+}
 
-    returns:
-      - 0 on success
-      - ENODATA in case there is no such item
-      - EINVAL if self is NULL or item is NULL
-*/
 int ts__vector_get(const ts__vector_t *self, size_t index, void *item) {
   /* preconditions */
   assert(self != NULL /* self must not be NULL */);
