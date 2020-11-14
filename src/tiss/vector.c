@@ -81,16 +81,6 @@ int ts__vector_reserve(ts__vector_t *self, size_t capacity) {
   return 0;
 }
 
-/* Shrink size of data array if (size <= capacity / 2)
-
-    parameters:
-      - self pointer to ts__vector_t
-
-    returns:
-      - 0 on success
-      - EINVAL if self is NULL
-      - ENOMEM Out of memory case
-*/
 int ts__vector_shrink(ts__vector_t *self) {
   /* preconditions */
   assert(self != NULL /* self must not be NULL */);
@@ -143,17 +133,6 @@ ssize_t ts__vector_push(ts__vector_t *self, const void *item) {
   return index;
 }
 
-/*  Traverse through all the items in the vector (self)
-    and apply the callback to each.
-
-    parameters:
-      - self pointer to ts__vector_t
-      - callback pointer to the transformation callback
-
-    returns:
-      - 0 or positive amount of transformed data
-      - EINVAL if self is NULL or callback is NULL
-*/
 ssize_t ts__vector_transform(ts__vector_t *self,
                              ts__vector_transform_cb callback) {
   /* preconditions */
@@ -174,16 +153,6 @@ ssize_t ts__vector_transform(ts__vector_t *self,
   return index + 1;
 }
 
-/*  Remove one element from the back
-
-    parameters:
-      - self pointer to ts__vector_t
-
-    returns:
-      - 0 on success
-      - ENODATA in case vector is empty
-      - EINVAL if self is NULL
-*/
 int ts__vector_pop(ts__vector_t *self) {
   /* preconditions */
   assert(self != NULL /* self must not be NULL */);
