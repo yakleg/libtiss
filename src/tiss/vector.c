@@ -81,6 +81,37 @@ int ts__vector_reserve(ts__vector_t *self, size_t capacity) {
   return 0;
 }
 
+/* Shrink size of data array if (size <= capacity / 2)
+
+    parameters:
+      - self pointer to ts__vector_t
+
+    returns:
+      - 0 on success
+      - EINVAL if self is NULL
+      - ENOMEM Out of memory case
+*/
+int ts__vector_shrink(ts__vector_t *self) {
+  /* preconditions */
+  assert(self != NULL /* self must not be NULL */);
+
+  if (self == NULL) return EINVAL;
+  /* preconditions */
+  size_t capacity = self->capacity;
+  void *data = self->data;
+
+  while (self->size <= capacity / 2) {
+    capacity /= 2;
+    data = realloc(data, capacity * self->item_size);
+    if (data == NULL) return ENOMEM;
+
+    self->data = data;
+    self->capacity = capacity;
+  }
+
+  return 0;
+}
+
 void ts__vector_free(ts__vector_t *self) {
   if (self != NULL) {
     if (self->data != NULL) free(self->data);
@@ -183,9 +214,12 @@ int ts__vector_get(const ts__vector_t *self, size_t index, void *item) {
 }
 
 ssize_t ts__vector_size(const ts__vector_t *self) {
+  /* preconditions */
   assert(self != NULL /* self must not be NULL */);
 
   if (self == NULL) return EINVAL;
+  /* preconditions */
+
   return self->size;
 }
 

@@ -44,6 +44,18 @@ int ts__vector_init(ts__vector_t **self, size_t item_size);
 */
 int ts__vector_reserve(ts__vector_t *self, size_t capacity);
 
+/* Shrink size of data array if (size <= capacity / 2)
+
+    parameters:
+      - self pointer to ts__vector_t
+
+    returns:
+      - 0 on success
+      - EINVAL if self is NULL
+      - ENOMEM Out of memory case
+*/
+int ts__vector_shrink(ts__vector_t *self);
+
 /*  Destroy vector */
 void ts__vector_free(ts__vector_t *self);
 
